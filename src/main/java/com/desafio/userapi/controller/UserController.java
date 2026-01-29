@@ -1,6 +1,7 @@
 package com.desafio.userapi.controller;
 
 import com.desafio.userapi.dto.UserResponseDTO;
+import com.desafio.userapi.repository.projections.UserCardCountProjection;
 import com.desafio.userapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -43,6 +44,28 @@ public class UserController {
     @GetMapping
     public List<UserResponseDTO> listAll() {
         return userService.findAll();
+    }
+
+    @Operation(
+            summary = "Listar usuários com quantidade de cartões",
+            description = "Retorna a lista de usuários juntamente com a quantidade de cartões associados a cada um. Endpoint exclusivo para administradores, utilizado para relatórios e dashboards."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de usuários com total de cartões retornada com sucesso",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UserCardCountProjection.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "401", description = "Usuário não autenticado"),
+            @ApiResponse(responseCode = "403", description = "Acesso negado")
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/with-cards")
+    public List<UserCardCountProjection> getUsersWithCardCount() {
+        return userService.getUsersWithCardCount();
     }
 
     @Operation(

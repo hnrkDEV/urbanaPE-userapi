@@ -4,6 +4,7 @@ import com.desafio.userapi.dto.CreateUserDTO;
 import com.desafio.userapi.dto.UserResponseDTO;
 import com.desafio.userapi.entity.User;
 import com.desafio.userapi.repository.UserRepository;
+import com.desafio.userapi.repository.projections.UserCardCountProjection;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,10 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         return toResponseDTO(user);
+    }
+
+    public List<UserCardCountProjection> getUsersWithCardCount() {
+        return userRepository.findUsersWithCardCount();
     }
 
     public UserResponseDTO create(CreateUserDTO dto) {

@@ -2,6 +2,8 @@ package com.desafio.userapi.entity;
 
 import com.desafio.userapi.enums.TipoCartao;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "cards")
@@ -11,7 +13,7 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "numero_cartao", nullable = false)
     private Long numeroCartao;
 
     @Column(nullable = false)
@@ -21,7 +23,8 @@ public class Card {
     private Boolean status;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "tipo_cartao", nullable = false, length = 50)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private TipoCartao tipoCartao;
 
     @ManyToOne

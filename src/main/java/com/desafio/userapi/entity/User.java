@@ -2,6 +2,9 @@ package com.desafio.userapi.entity;
 
 import com.desafio.userapi.enums.Role;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.util.List;
 
 @Entity
@@ -18,11 +21,13 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "senha", nullable = false)
     private String senha;
 
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "role", nullable = false, length = 50)
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
