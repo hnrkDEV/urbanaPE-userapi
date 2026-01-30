@@ -1,13 +1,10 @@
 package com.desafio.userapi.dto;
 
-import com.desafio.userapi.enums.Role;
-
 public class CreateUserDTO {
 
     private String nome;
     private String email;
     private String senha;
-    private Role role;
 
     public String getNome() {
         return nome;
@@ -31,13 +28,5 @@ public class CreateUserDTO {
 
     public void setSenha(String senha) {
         this.senha = senha;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 }

@@ -3,6 +3,7 @@ package com.desafio.userapi.service;
 import com.desafio.userapi.dto.CreateUserDTO;
 import com.desafio.userapi.dto.UserResponseDTO;
 import com.desafio.userapi.entity.User;
+import com.desafio.userapi.enums.Role;
 import com.desafio.userapi.repository.UserRepository;
 import com.desafio.userapi.repository.projections.UserCardCountProjection;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,7 +52,7 @@ public class UserService {
         user.setNome(dto.getNome());
         user.setEmail(dto.getEmail());
         user.setSenha(passwordEncoder.encode(dto.getSenha()));
-        user.setRole(dto.getRole());
+        user.setRole(Role.CLIENT);
 
         User savedUser = userRepository.save(user);
 
