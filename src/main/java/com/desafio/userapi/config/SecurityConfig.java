@@ -25,18 +25,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                // DESLIGA TUDO que cria login
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
 
-                // API STATELESS
                 .sessionManagement(sm ->
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // NÃO REDIRECIONA, SÓ RETORNA 401
                 .exceptionHandling(ex ->
                         ex.authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -45,15 +42,14 @@ public class SecurityConfig {
                         })
                 )
 
-                // ROTAS
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/**",
-                                "/swagger/**",        // ✅ ESSENCIAL
+                                "/swagger/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
-                                "/login"              // opcional, mas recomendado
+                                "/login"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
