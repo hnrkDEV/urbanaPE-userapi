@@ -21,13 +21,17 @@ public class CardService {
         this.userService = userService;
     }
 
+    private Long gerarNumeroCartao() {
+        return 4000_0000_0000L + (long) (Math.random() * 1_000_000_000L);
+    }
+
     public CardDTO addCard(Long userId, CardDTO dto) {
 
         User user = userService.findById(userId);
 
         Card card = new Card();
         card.setNome(dto.getNome());
-        card.setNumeroCartao(dto.getNumeroCartao());
+        card.setNumeroCartao(gerarNumeroCartao());
         card.setStatus(true);
         card.setTipoCartao(dto.getTipoCartao());
         card.setUser(user);
