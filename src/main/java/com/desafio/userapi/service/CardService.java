@@ -3,6 +3,7 @@ package com.desafio.userapi.service;
 import com.desafio.userapi.dto.CardDTO;
 import com.desafio.userapi.entity.Card;
 import com.desafio.userapi.entity.User;
+import com.desafio.userapi.exception.BusinessException;
 import com.desafio.userapi.repository.CardRepository;
 import org.springframework.stereotype.Service;
 
@@ -63,10 +64,10 @@ public class CardService {
 
     public void toggleStatus(Long cardId, Long userId) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Cartão não encontrado"));
+                .orElseThrow(() -> new BusinessException("Cartão não encontrado"));
 
         if (!card.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Você não tem permissão para alterar este cartão");
+            throw new BusinessException("Você não tem permissão para alterar este cartão");
         }
 
         card.setStatus(!card.getStatus());
@@ -76,7 +77,7 @@ public class CardService {
     public void toggleStatusAdmin(Long cardId) {
 
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Cartão não encontrado"));
+                .orElseThrow(() -> new BusinessException("Cartão não encontrado"));
 
         card.setStatus(!card.getStatus());
         cardRepository.save(card);
@@ -86,41 +87,61 @@ public class CardService {
         cardRepository.deleteById(cardId);
     }
 
-    public void credit(Long cardId, Double valor, boolean isAdmin) {
-
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Cartão não encontrado"));
-
-        if (!card.getStatus()) {
-            throw new RuntimeException("Cartão inativo");
-        }
+    private void validarPermissaoCredito(Card card, boolean isAdmin) {
 
         switch (card.getTipoCartao()) {
 
             case ESTUDANTE:
                 if (!isAdmin) {
-                    throw new RuntimeException("Crédito permitido apenas pela administração");
+                    throw new BusinessException(
+                            "Cartão estudante só pode receber crédito pela administração"
+                    );
                 }
                 break;
 
             case TRABALHADOR:
-                // regra futura: crédito mensal fixo
+                if (!isAdmin) {
+                    throw new BusinessException(
+                            "Crédito do cartão trabalhador é realizado automaticamente"
+                    );
+                }
                 break;
 
             case COMUM:
-                // sem restrições adicionais
                 break;
         }
+    }
+
+    private void validarLimite(Card card, Double valor) {
 
         Double novoSaldo = card.getSaldo() + valor;
 
         if (novoSaldo > card.getLimite()) {
-            throw new RuntimeException("Limite do cartão excedido");
+            throw new BusinessException("Limite do cartão excedido");
+        }
+    }
+
+
+    public void credit(Long cardId, Double valor, boolean isAdmin) {
+
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new BusinessException("Cartão não encontrado"));
+
+        if (!card.getStatus()) {
+            throw new BusinessException("Cartão inativo");
         }
 
-        card.setSaldo(novoSaldo);
+        if (valor == null || valor <= 0) {
+            throw new BusinessException("Valor inválido para crédito");
+        }
+
+        validarPermissaoCredito(card, isAdmin);
+        validarLimite(card, valor);
+
+        card.setSaldo(card.getSaldo() + valor);
         cardRepository.save(card);
     }
+
 
 
     private CardDTO toDTO(Card card) {
