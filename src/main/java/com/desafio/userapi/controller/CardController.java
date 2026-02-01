@@ -1,6 +1,7 @@
 package com.desafio.userapi.controller;
 
 import com.desafio.userapi.dto.CardDTO;
+import com.desafio.userapi.dto.CardTransactionDTO;
 import com.desafio.userapi.dto.CreditCardDTO;
 import com.desafio.userapi.entity.User;
 import com.desafio.userapi.service.CardService;
@@ -122,6 +123,30 @@ public class CardController {
         cardService.credit(id, dto.getValor(), isAdmin);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(
+            summary = "Extrato do cartão",
+            description = "Retorna o histórico de movimentações do cartão"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Extrato retornado com sucesso"),
+            @ApiResponse(responseCode = "401", description = "Usuário não autenticado"),
+            @ApiResponse(responseCode = "403", description = "Acesso negado"),
+            @ApiResponse(responseCode = "404", description = "Cartão não encontrado")
+    })
+    @GetMapping("/{id}/transactions")
+    public ResponseEntity<List<CardTransactionDTO>> getTransactions(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        return ResponseEntity.ok(
+                cardService.getTransactions(id, user.getId())
+        );
+    }
+
 
 
     @Operation(

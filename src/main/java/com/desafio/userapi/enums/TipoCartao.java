@@ -3,7 +3,7 @@ package com.desafio.userapi.enums;
 public enum TipoCartao {
     COMUM(0.0, 200.0),
     ESTUDANTE(0.0, 300.0),
-    TRABALHADOR(0.0, 500.0);
+    TRABALHADOR(500.0, 500.0);
 
     private final Double saldoInicial;
     private final Double limite;

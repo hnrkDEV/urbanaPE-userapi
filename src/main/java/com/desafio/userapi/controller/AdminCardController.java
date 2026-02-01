@@ -60,7 +60,7 @@ public class AdminCardController {
     })
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<CardDTO>> listByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(cardService.listByUserAdmin(userId));
+        return ResponseEntity.ok(cardService.listByUser(userId));
     }
 
     @Operation(
