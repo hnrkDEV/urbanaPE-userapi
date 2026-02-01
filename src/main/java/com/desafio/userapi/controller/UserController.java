@@ -1,5 +1,6 @@
 package com.desafio.userapi.controller;
 
+import com.desafio.userapi.dto.UpdateUserDTO;
 import com.desafio.userapi.dto.UserResponseDTO;
 import com.desafio.userapi.repository.projections.UserCardCountProjection;
 import com.desafio.userapi.service.UserService;
@@ -69,6 +70,37 @@ public class UserController {
     }
 
     @Operation(
+            summary = "Atualizar usuário",
+            description = """
+        Atualiza os dados de um usuário existente.
+        
+        Regras:
+        - Apenas administradores podem atualizar qualquer usuário
+        - Email não pode ser duplicado
+        - Senha não é alterada neste endpoint
+        """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuário atualizado com sucesso",
+                    content = @Content(schema = @Schema(implementation = UserResponseDTO.class))
+            ),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "401", description = "Usuário não autenticado"),
+            @ApiResponse(responseCode = "403", description = "Acesso negado"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponseDTO update(
+            @PathVariable Long id,
+            @RequestBody UpdateUserDTO dto
+    ) {
+        return userService.update(id, dto);
+    }
+
+    @Operation(
             summary = "Obter dados do usuário autenticado",
             description = "Retorna as informações do próprio usuário autenticado."
     )
@@ -85,6 +117,28 @@ public class UserController {
         String email = authentication.getName();
         return userService.getMe(email);
     }
+
+    @Operation(
+            summary = "Atualizar dados do usuário autenticado",
+            description = "Permite que o próprio usuário atualize seus dados pessoais."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuário atualizado com sucesso",
+                    content = @Content(schema = @Schema(implementation = UserResponseDTO.class))
+            ),
+            @ApiResponse(responseCode = "401", description = "Usuário não autenticado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos")
+    })
+    @PutMapping("/me")
+    public UserResponseDTO updateMe(
+            Authentication authentication,
+            @RequestBody UpdateUserDTO dto
+    ) {
+        return userService.updateMe(authentication.getName(), dto);
+    }
+
 
     @Operation(
             summary = "Remover usuário",

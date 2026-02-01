@@ -9,6 +9,8 @@ public class CardDTO {
     private String nome;
     private Boolean status;
     private TipoCartao tipoCartao;
+    private Double saldo;
+    private Double limite;
 
     public Long getId() {
         return id;
@@ -40,6 +42,20 @@ public class CardDTO {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public Double getLimite() {
+        return limite;
+    }
+    public void setLimite(Double limite) {
+        this.limite = limite;
+    }
+
+    public Double getSaldo() {
+        return saldo;
+    }
+    public void setSaldo(Double saldo) {
+        this.saldo = saldo;
     }
 
     public TipoCartao getTipoCartao() {

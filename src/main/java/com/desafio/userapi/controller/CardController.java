@@ -1,6 +1,7 @@
 package com.desafio.userapi.controller;
 
 import com.desafio.userapi.dto.CardDTO;
+import com.desafio.userapi.dto.CreditCardDTO;
 import com.desafio.userapi.entity.User;
 import com.desafio.userapi.service.CardService;
 import com.desafio.userapi.service.UserService;
@@ -98,6 +99,30 @@ public class CardController {
         cardService.toggleStatus(id, user.getId());
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(
+            summary = "Creditar saldo no cartão",
+            description = "Realiza crédito respeitando as regras do tipo de cartão"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Crédito realizado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Regra de negócio violada"),
+            @ApiResponse(responseCode = "401", description = "Usuário não autenticado"),
+            @ApiResponse(responseCode = "403", description = "Operação não permitida")
+    })
+    @PatchMapping("/{id}/credit")
+    public ResponseEntity<Void> credit(
+            @PathVariable Long id,
+            @RequestBody @Valid CreditCardDTO dto,
+            Authentication authentication
+    ) {
+        User user = userService.findByEmail(authentication.getName());
+        boolean isAdmin = user.getRole().name().equals("ADMIN");
+
+        cardService.credit(id, dto.getValor(), isAdmin);
+        return ResponseEntity.noContent().build();
+    }
+
 
     @Operation(
             summary = "Remover cartão",

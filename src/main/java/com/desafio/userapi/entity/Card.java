@@ -22,6 +22,12 @@ public class Card {
     @Column(nullable = false)
     private Boolean status;
 
+    @Column(nullable = false)
+    private Double saldo;
+
+    @Column(nullable = false)
+    private Double limite;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_cartao", nullable = false, length = 50)
     @JdbcTypeCode(SqlTypes.VARCHAR)
@@ -61,6 +67,22 @@ public class Card {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public Double getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(Double saldo) {
+        this.saldo = saldo;
+    }
+
+    public Double getLimite() {
+        return limite;
+    }
+
+    public void setLimite(Double limite) {
+        this.limite = limite;
     }
 
     public TipoCartao getTipoCartao() {

@@ -1,6 +1,7 @@
 package com.desafio.userapi.service;
 
 import com.desafio.userapi.dto.CreateUserDTO;
+import com.desafio.userapi.dto.UpdateUserDTO;
 import com.desafio.userapi.dto.UserResponseDTO;
 import com.desafio.userapi.entity.User;
 import com.desafio.userapi.enums.Role;
@@ -31,11 +32,61 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
     }
 
+    public UserResponseDTO update(Long id, UpdateUserDTO dto) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        if (dto.getEmail() != null &&
+                !dto.getEmail().equals(user.getEmail()) &&
+                userRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new BusinessException("Email já cadastrado");
+        }
+
+        if (dto.getNome() != null) {
+            user.setNome(dto.getNome());
+        }
+
+        if (dto.getEmail() != null) {
+            user.setEmail(dto.getEmail());
+        }
+
+        if (dto.getRole() != null) {
+            user.setRole(dto.getRole());
+        }
+
+        User updatedUser = userRepository.save(user);
+
+        return toResponseDTO(updatedUser);
+    }
+
     public UserResponseDTO getMe(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         return toResponseDTO(user);
+    }
+
+    public UserResponseDTO updateMe(String email, UpdateUserDTO dto) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        if (dto.getNome() != null) {
+            user.setNome(dto.getNome());
+        }
+
+        if (dto.getEmail() != null &&
+                !dto.getEmail().equals(user.getEmail()) &&
+                userRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new BusinessException("Email já cadastrado");
+        }
+
+        if (dto.getEmail() != null) {
+            user.setEmail(dto.getEmail());
+        }
+
+        return toResponseDTO(userRepository.save(user));
     }
 
     public List<UserCardCountProjection> getUsersWithCardCount() {

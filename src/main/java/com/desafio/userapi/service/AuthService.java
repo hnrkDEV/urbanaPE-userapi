@@ -2,6 +2,7 @@ package com.desafio.userapi.service;
 
 import com.desafio.userapi.dto.LoginDTO;
 import com.desafio.userapi.entity.User;
+import com.desafio.userapi.exception.AuthenticationException;
 import com.desafio.userapi.exception.BusinessException;
 import com.desafio.userapi.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,11 +24,11 @@ public class AuthService {
 
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() ->
-                        new BusinessException("Email ou senha inválidos")
+                       new AuthenticationException("Email ou senha inválidos")
                 );
 
         if (!passwordEncoder.matches(dto.getSenha(), user.getSenha())) {
-            throw new BusinessException("Email ou senha inválidos");
+            throw new AuthenticationException("Email ou senha inválidos");
         }
 
         return user;

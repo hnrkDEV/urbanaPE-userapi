@@ -31,6 +31,9 @@ public class CardService {
         card.setTipoCartao(dto.getTipoCartao());
         card.setUser(user);
 
+        card.setSaldo(dto.getTipoCartao().getSaldoInicial());
+        card.setLimite(dto.getTipoCartao().getLimite());
+
         Card saved = cardRepository.save(card);
 
         return toDTO(saved);
@@ -83,6 +86,43 @@ public class CardService {
         cardRepository.deleteById(cardId);
     }
 
+    public void credit(Long cardId, Double valor, boolean isAdmin) {
+
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("Cartão não encontrado"));
+
+        if (!card.getStatus()) {
+            throw new RuntimeException("Cartão inativo");
+        }
+
+        switch (card.getTipoCartao()) {
+
+            case ESTUDANTE:
+                if (!isAdmin) {
+                    throw new RuntimeException("Crédito permitido apenas pela administração");
+                }
+                break;
+
+            case TRABALHADOR:
+                // regra futura: crédito mensal fixo
+                break;
+
+            case COMUM:
+                // sem restrições adicionais
+                break;
+        }
+
+        Double novoSaldo = card.getSaldo() + valor;
+
+        if (novoSaldo > card.getLimite()) {
+            throw new RuntimeException("Limite do cartão excedido");
+        }
+
+        card.setSaldo(novoSaldo);
+        cardRepository.save(card);
+    }
+
+
     private CardDTO toDTO(Card card) {
         CardDTO dto = new CardDTO();
         dto.setId(card.getId());
@@ -90,6 +130,8 @@ public class CardService {
         dto.setNumeroCartao(card.getNumeroCartao());
         dto.setStatus(card.getStatus());
         dto.setTipoCartao(card.getTipoCartao());
+        dto.setSaldo(card.getSaldo());
+        dto.setLimite(card.getLimite());
         return dto;
     }
 }

@@ -1,0 +1,7 @@
+package com.desafio.userapi.exception;
+
+public class AuthenticationException extends RuntimeException {
+    public AuthenticationException(String message) {
+        super(message);
+    }
+}
