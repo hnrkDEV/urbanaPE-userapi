@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface CardTransactionRepository extends JpaRepository<CardTransaction, Long> {
 
+    boolean existsByCardId(Long cardId);
     List<CardTransaction> findByCardIdOrderByCreatedAtDesc(Long cardId);
 }

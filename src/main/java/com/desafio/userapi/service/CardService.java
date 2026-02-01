@@ -170,6 +170,12 @@ public class CardService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new BusinessException("Cartão não encontrado"));
 
+        if (transactionRepository.existsByCardId(cardId)) {
+            throw new BusinessException(
+                    "Não é possível remover um cartão com histórico de movimentações"
+            );
+        }
+
         cardRepository.delete(card);
     }
 
