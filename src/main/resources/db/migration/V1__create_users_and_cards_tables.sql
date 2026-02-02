@@ -11,8 +11,6 @@ CREATE TABLE cards (
                        numero_cartao BIGINT NOT NULL,
                        nome VARCHAR(100) NOT NULL,
                        status BOOLEAN NOT NULL,
-                       saldo DOUBLE PRECISION NOT NULL,
-                       limite DOUBLE PRECISION NOT NULL,
                        tipo_cartao VARCHAR(50) NOT NULL,
                        user_id BIGINT NOT NULL,
 
