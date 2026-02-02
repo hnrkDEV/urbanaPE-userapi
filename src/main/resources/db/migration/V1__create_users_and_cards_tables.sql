@@ -1,6 +1,6 @@
 
 CREATE TABLE users (
-                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                       id BIGINT BIGSERIAL  PRIMARY KEY,
 
                        nome VARCHAR(100) NOT NULL,
 
@@ -12,7 +12,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE cards (
-                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                       id BIGINT BIGSERIAL  PRIMARY KEY,
 
                        numero_cartao BIGINT NOT NULL,
 
